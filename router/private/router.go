@@ -11,6 +11,7 @@ func RegisterRoutes(r *gin.Engine) {
 	privateGroup := r.Group("/api/")
 	privateGroup.Use(middleware.AuthMiddleware())
 
+	RegisterUserRoutes(privateGroup)
 	RegisterProductRoutes(privateGroup)
 	RegisterTransactionRoutes(privateGroup)
 	RegisterReportRoutes(privateGroup)

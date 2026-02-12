@@ -53,7 +53,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		// Inject into context
+
 		c.Set("user_id", claims.UserID)
 		c.Set("shop_id", claims.ShopID)
 		c.Set("role", claims.Role)

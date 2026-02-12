@@ -24,7 +24,6 @@ type PublicProductResponse struct {
 
 func GetPublicProducts(shopID uint) ([]PublicProductResponse, error) {
 
-	// Vérifier que le shop existe et est actif
 	var shop models.Shop
 	if err := config.DB.First(&shop, shopID).Error; err != nil {
 		return nil, errors.New("shop not found")
