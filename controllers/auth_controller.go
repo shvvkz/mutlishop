@@ -16,6 +16,19 @@ type RegisterInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
+// Register godoc
+// @Summary Create a new Admin user
+// @Description Allows a SuperAdmin to create a new Admin user in their own shop. Role is automatically set to Admin.
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param input body RegisterInput true "Admin creation payload"
+// @Success 201 {object} map[string]interface{} "Admin successfully created"
+// @Failure 400 {object} map[string]interface{} "Invalid input or creation error"
+// @Failure 401 {object} map[string]interface{} "Unauthorized"
+// @Failure 403 {object} map[string]interface{} "Forbidden - SuperAdmin only"
+// @Router /api/users [post]
 func Register(c *gin.Context) {
 
 	shopID := c.GetUint("shop_id")

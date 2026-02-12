@@ -33,13 +33,12 @@ func ConnectDatabase() {
 		getEnv("DB_PORT"),
 	)
 
-	// 🔥 Logger personnalisé GORM
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
 		logger.Config{
 			SlowThreshold:             time.Second,
-			LogLevel:                  logger.Warn, // log seulement warnings & erreurs
-			IgnoreRecordNotFoundError: true,        // ignore record not found
+			LogLevel:                  logger.Warn,
+			IgnoreRecordNotFoundError: true,
 			Colorful:                  false,
 		},
 	)

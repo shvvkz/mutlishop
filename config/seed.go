@@ -61,18 +61,15 @@ func SeedSuperAdmins() {
 			Where("shop_id = ? AND role = ?", shop.ID, "SuperAdmin").
 			First(&existing).Error
 
-		// ✅ SuperAdmin déjà existant
 		if err == nil {
 			continue
 		}
 
-		// ❌ Vraie erreur DB
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.Println("Database error while checking SuperAdmin:", err)
 			continue
 		}
 
-		// 🔐 Création du SuperAdmin
 		hashedPassword, err := bcrypt.GenerateFromPassword(
 			[]byte("superadmin"),
 			bcrypt.DefaultCost,

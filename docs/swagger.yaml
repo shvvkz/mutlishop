@@ -10,6 +10,19 @@ definitions:
     - email
     - password
     type: object
+  controllers.RegisterInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -45,4 +58,50 @@ paths:
       summary: Login user
       tags:
       - Auth
+  /api/users:
+    post:
+      consumes:
+      - application/json
+      description: Allows a SuperAdmin to create a new Admin user in their own shop.
+        Role is automatically set to Admin.
+      parameters:
+      - description: Admin creation payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RegisterInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Admin successfully created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid input or creation error
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden - SuperAdmin only
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new Admin user
+      tags:
+      - Users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
