@@ -92,7 +92,7 @@ Peut :
 * Voir profits (Done)
 * Voir dashboard (To Do)
 * Gérer utilisateurs (Done)
-* Modifier WhatsAppNumber du shop (To Do)
+* Modifier WhatsAppNumber du shop (Done)
 
 ---
 
