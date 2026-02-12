@@ -52,12 +52,10 @@ func CreateTransaction(shopID uint, input models.Transaction) error {
 
 	input.ShopID = shopID
 
-	// Vérification type valide
 	if input.Type != "Sale" && input.Type != "Expense" && input.Type != "Withdrawal" {
 		return errors.New("invalid transaction type")
 	}
 
-	// Si Sale → gérer stock
 	if input.Type == "Sale" {
 
 		var product models.Product
@@ -73,14 +71,12 @@ func CreateTransaction(shopID uint, input models.Transaction) error {
 			return errors.New("insufficient stock")
 		}
 
-		// Décrémenter stock
 		product.Stock -= input.Quantity
 
 		if err := config.DB.Save(&product).Error; err != nil {
 			return err
 		}
 
-		// Calcul automatique montant
 		input.Amount = float64(input.Quantity) * product.SellingPrice
 	}
 
@@ -102,7 +98,6 @@ func DeleteTransaction(shopID uint, id string) error {
 		return errors.New("transaction not found")
 	}
 
-	// Si c'était une Sale → remettre le stock
 	if transaction.Type == "Sale" {
 
 		var product models.Product

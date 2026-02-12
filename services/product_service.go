@@ -45,7 +45,6 @@ func GetProducts(shopID uint, role string) ([]ProductResponse, error) {
 			CreatedAt:    p.CreatedAt,
 		}
 
-		// Seulement SuperAdmin voit PurchasePrice
 		if role == "SuperAdmin" {
 			product.PurchasePrice = p.PurchasePrice
 		}
@@ -102,7 +101,6 @@ func UpdateProduct(shopID uint, role string, id string, input models.Product) er
 	product.Stock = input.Stock
 	product.ImageURL = input.ImageURL
 
-	// Seul SuperAdmin peut modifier PurchasePrice
 	if role == "SuperAdmin" {
 		product.PurchasePrice = input.PurchasePrice
 	}

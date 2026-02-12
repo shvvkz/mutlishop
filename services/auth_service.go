@@ -10,18 +10,15 @@ import (
 
 func Register(name, email, password, role string, shopID uint) error {
 
-	// Vérifier que le shop existe
 	var shop models.Shop
 	if err := config.DB.First(&shop, shopID).Error; err != nil {
 		return errors.New("shop does not exist")
 	}
 
-	// Vérifier rôle valide
 	if role != "SuperAdmin" && role != "Admin" {
 		return errors.New("invalid role")
 	}
 
-	// Vérifier si email existe déjà
 	var existing models.User
 	if err := config.DB.Where("email = ?", email).First(&existing).Error; err == nil {
 		return errors.New("email already exists")

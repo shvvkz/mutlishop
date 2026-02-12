@@ -27,6 +27,7 @@ func main() {
 	)
 
 	config.SeedShops()
+	config.SeedSuperAdmins()
 
 	gin.SetMode(gin.ReleaseMode)
 

@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"multishop/models"
 	"multishop/services"
 	"multishop/utils"
 
@@ -13,34 +14,32 @@ type RegisterInput struct {
 	Name     string `json:"name" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
-	Role     string `json:"role" binding:"required"`
-	ShopID   uint   `json:"shop_id" binding:"required"`
 }
 
 func Register(c *gin.Context) {
 
+	shopID := c.GetUint("shop_id")
+
 	var input RegisterInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+		utils.Error(c, 400, err.Error())
 		return
 	}
 
-	err := services.Register(
-		input.Name,
-		input.Email,
-		input.Password,
-		input.Role,
-		input.ShopID,
-	)
+	user := models.User{
+		Name:     input.Name,
+		Email:    input.Email,
+		Password: input.Password,
+		Role:     "Admin",
+		ShopID:   shopID,
+	}
 
-	if err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+	if err := services.Register(user.Name, user.Email, user.Password, user.Role, user.ShopID); err != nil {
+		utils.Error(c, 400, err.Error())
 		return
 	}
 
-	utils.JSON(c, http.StatusCreated, gin.H{
-		"message": "user created successfully",
-	})
+	utils.JSON(c, 201, gin.H{"message": "admin created"})
 }
 
 type LoginInput struct {
