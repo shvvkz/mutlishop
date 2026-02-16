@@ -10,6 +10,28 @@ definitions:
     - email
     - password
     type: object
+  controllers.ProductInput:
+    properties:
+      category:
+        type: string
+      description:
+        type: string
+      image_url:
+        type: string
+      name:
+        type: string
+      purchase_price:
+        type: number
+      selling_price:
+        type: number
+      stock:
+        type: integer
+    required:
+    - name
+    - purchase_price
+    - selling_price
+    - stock
+    type: object
   controllers.RegisterInput:
     properties:
       email:
@@ -22,6 +44,54 @@ definitions:
     - email
     - name
     - password
+    type: object
+  controllers.TransactionInput:
+    properties:
+      amount:
+        type: number
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+      type:
+        type: string
+    required:
+    - type
+    type: object
+  controllers.UpdateWhatsAppInput:
+    properties:
+      whatsapp_number:
+        type: string
+    required:
+    - whatsapp_number
+    type: object
+  services.DashboardResponse:
+    properties:
+      low_stock_products:
+        type: integer
+      net_profit:
+        type: number
+      total_expenses:
+        type: number
+      total_sales:
+        type: number
+      total_withdrawals:
+        type: number
+    type: object
+  services.TransactionResponse:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      id:
+        type: integer
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+      type:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -58,7 +128,447 @@ paths:
       summary: Login user
       tags:
       - Auth
+  /api/products:
+    get:
+      description: Returns all products belonging to the authenticated user's shop.
+        SuperAdmin can see PurchasePrice, Admin cannot.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of products
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all products of the current shop
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Allows an Admin or SuperAdmin to create a new product in their
+        shop. Product name must be unique per shop.
+      parameters:
+      - description: Product creation payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ProductInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Product created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new product
+      tags:
+      - Products
+  /api/products/{id}:
+    delete:
+      description: Allows a SuperAdmin to delete a product belonging to their shop.
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product deleted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden - SuperAdmin only
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a product
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Allows Admin or SuperAdmin to update a product belonging to their
+        shop. Product name must remain unique. Only SuperAdmin can update PurchasePrice.
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated product payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ProductInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid input or product not found
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update an existing product
+      tags:
+      - Products
+  /api/public/{shopID}/products:
+    get:
+      description: Returns the list of publicly visible products for a specific shop.
+        PurchasePrice is never exposed. Accessible without authentication.
+      parameters:
+      - description: Shop ID
+        in: path
+        name: shopID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of public products
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid shop ID
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Shop not found or inactive
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get public products of a shop
+      tags:
+      - Public
+  /api/public/{shopID}/products/{productID}/whatsapp:
+    get:
+      description: Generates a dynamic WhatsApp link for a specific product of a given
+        shop. Accessible without authentication.
+      parameters:
+      - description: Shop ID
+        in: path
+        name: shopID
+        required: true
+        type: integer
+      - description: Product ID
+        in: path
+        name: productID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Generated WhatsApp link
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid shop or product ID
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Shop or product not found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Generate WhatsApp link for a product
+      tags:
+      - Public
+  /api/reports/dashboard:
+    get:
+      description: Returns financial metrics for the authenticated SuperAdmin's shop
+        including total sales, expenses, withdrawals, net profit and low stock products.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Financial dashboard data
+          schema:
+            $ref: '#/definitions/services.DashboardResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden - SuperAdmin only
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get financial dashboard of the shop
+      tags:
+      - Reports
+  /api/shop/whatsapp:
+    patch:
+      consumes:
+      - application/json
+      description: Allows a SuperAdmin to update the WhatsApp number of their shop.
+      parameters:
+      - description: New WhatsApp number
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdateWhatsAppInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: WhatsApp number updated
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden - SuperAdmin only
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update shop WhatsApp number
+      tags:
+      - Shop
+  /api/transactions:
+    get:
+      description: Returns all transactions (Sale, Expense, Withdrawal) belonging
+        to the authenticated user's shop.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of transactions
+          schema:
+            items:
+              $ref: '#/definitions/services.TransactionResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all transactions of the current shop
+      tags:
+      - Transactions
+    post:
+      consumes:
+      - application/json
+      description: Allows Admin or SuperAdmin to create a transaction (Sale, Expense,
+        Withdrawal). For Sale, stock is validated and updated automatically.
+      parameters:
+      - description: Transaction payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.TransactionInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Transaction created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid input, insufficient stock, or product not found
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new transaction
+      tags:
+      - Transactions
+  /api/transactions/{id}:
+    delete:
+      description: Allows Admin or SuperAdmin to delete a transaction belonging to
+        their shop. If the transaction is a Sale, the product stock is restored automatically.
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transaction deleted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Transaction not found
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a transaction
+      tags:
+      - Transactions
   /api/users:
+    get:
+      description: Allows a SuperAdmin to retrieve all users belonging to their shop.
+        Only id, email and role are returned.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden - SuperAdmin only
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all users of the current shop
+      tags:
+      - Users
     post:
       consumes:
       - application/json
@@ -97,6 +607,91 @@ paths:
       security:
       - BearerAuth: []
       summary: Create a new Admin user
+      tags:
+      - Users
+  /api/users/{id}:
+    delete:
+      description: Allows a SuperAdmin to delete a user belonging to their shop.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User deleted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: User not found
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden - SuperAdmin only
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a user
+      tags:
+      - Users
+    patch:
+      consumes:
+      - application/json
+      description: Allows a SuperAdmin to update the role of a user belonging to their
+        shop. Only Admin or SuperAdmin roles are allowed.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Role update payload (Admin or SuperAdmin)
+        in: body
+        name: input
+        required: true
+        schema:
+          properties:
+            role:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Role updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid role or user not found
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden - SuperAdmin only
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update user role
       tags:
       - Users
 securityDefinitions:

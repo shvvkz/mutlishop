@@ -14,7 +14,7 @@ func RegisterUserRoutes(rg *gin.RouterGroup) {
 	users.Use(middleware.RequireRole("SuperAdmin"))
 
 	users.GET("", controllers.GetUsers)
-	users.PUT("/:id", controllers.UpdateUserRole)
+	users.PATCH("/:id", controllers.UpdateUserRole)
 	users.DELETE("/:id", controllers.DeleteUser)
 	users.POST("", controllers.Register) // création Admin
 }

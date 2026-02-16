@@ -11,7 +11,7 @@ func RegisterShopRoutes(rg *gin.RouterGroup) {
 
 	shop := rg.Group("/shop")
 
-	shop.PUT("/whatsapp",
+	shop.PATCH("/whatsapp",
 		middleware.RequireRole("SuperAdmin"),
 		controllers.UpdateShopWhatsApp,
 	)

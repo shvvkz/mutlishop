@@ -22,16 +22,16 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		tokenString := strings.Split(authHeader, "Bearer ")
-		if len(tokenString) != 2 {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
-			return
+		parts := strings.Split(authHeader, " ")
+
+		if len(parts) == 2 && parts[0] == "Bearer" {
+			authHeader = parts[1]
 		}
 
 		claims := &utils.JWTClaims{}
 
 		token, err := jwt.ParseWithClaims(
-			tokenString[1],
+			authHeader,
 			claims,
 			func(token *jwt.Token) (interface{}, error) {
 				return []byte(os.Getenv("JWT_SECRET")), nil

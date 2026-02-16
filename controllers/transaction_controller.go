@@ -10,6 +10,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetTransactions godoc
+// @Summary Get all transactions of the current shop
+// @Description Returns all transactions (Sale, Expense, Withdrawal) belonging to the authenticated user's shop.
+// @Tags Transactions
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} services.TransactionResponse "List of transactions"
+// @Failure 401 {object} map[string]interface{} "Unauthorized"
+// @Failure 403 {object} map[string]interface{} "Forbidden"
+// @Failure 500 {object} map[string]interface{} "Internal server error"
+// @Router /api/transactions [get]
 func GetTransactions(c *gin.Context) {
 
 	shopID := c.GetUint("shop_id")
@@ -30,6 +41,19 @@ type TransactionInput struct {
 	Amount    float64 `json:"amount"`
 }
 
+// CreateTransaction godoc
+// @Summary Create a new transaction
+// @Description Allows Admin or SuperAdmin to create a transaction (Sale, Expense, Withdrawal). For Sale, stock is validated and updated automatically.
+// @Tags Transactions
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param input body controllers.TransactionInput true "Transaction payload"
+// @Success 201 {object} map[string]interface{} "Transaction created successfully"
+// @Failure 400 {object} map[string]interface{} "Invalid input, insufficient stock, or product not found"
+// @Failure 401 {object} map[string]interface{} "Unauthorized"
+// @Failure 403 {object} map[string]interface{} "Forbidden"
+// @Router /api/transactions [post]
 func CreateTransaction(c *gin.Context) {
 
 	shopID := c.GetUint("shop_id")
@@ -57,6 +81,18 @@ func CreateTransaction(c *gin.Context) {
 	})
 }
 
+// DeleteTransaction godoc
+// @Summary Delete a transaction
+// @Description Allows Admin or SuperAdmin to delete a transaction belonging to their shop. If the transaction is a Sale, the product stock is restored automatically.
+// @Tags Transactions
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Transaction ID"
+// @Success 200 {object} map[string]interface{} "Transaction deleted successfully"
+// @Failure 400 {object} map[string]interface{} "Transaction not found"
+// @Failure 401 {object} map[string]interface{} "Unauthorized"
+// @Failure 403 {object} map[string]interface{} "Forbidden"
+// @Router /api/transactions/{id} [delete]
 func DeleteTransaction(c *gin.Context) {
 
 	shopID := c.GetUint("shop_id")
