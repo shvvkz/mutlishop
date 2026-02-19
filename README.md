@@ -1,8 +1,12 @@
-# Electronic Multi-Shop API – Bootcamp Go
+# MultiShop API – Bootcamp Go
+
+---
+
+# 1. Présentation Générale
 
 ## Description du Projet
 
-Electronic Multi-Shop API est un backend développé en **Go** permettant de gérer plusieurs boutiques d’électronique avec une isolation stricte des données entre chaque boutique.
+MultiShop API est un backend développé en Go permettant de gérer plusieurs boutiques d’électronique avec une isolation stricte des données entre chaque boutique.
 
 Chaque boutique possède :
 
@@ -22,14 +26,17 @@ Le système garantit :
 
 ## Stack Technique
 
-* **Go 1.25+**
-* **Gin** (framework HTTP)
-* **GORM** (ORM)
-* **PostgreSQL 16**
-* **Authentification JWT**
-* **Docker & Docker Compose**
+* Go 1.25+
+* Gin (framework HTTP)
+* GORM (ORM)
+* PostgreSQL 16
+* Authentification JWT
+* Docker & Docker Compose
+* Vue.js (Frontend)
 
 ---
+
+# 2. Mise en Place du Projet
 
 ## Prérequis
 
@@ -65,33 +72,26 @@ JWT_SECRET=your_secret_key_here
 JWT_EXPIRE_HOURS=24
 ```
 
-Nous avons mit à disposition un fichier example.env.
+Nous avons mis à disposition un fichier `example.env`.
 
-Pour créer simplement votre fichier .env veuillez executer cette commande:
+Pour créer simplement votre fichier `.env`, veuillez exécuter la commande suivante :
+
 ```
 mv ./example.env ./api/.env
-``` 
+```
 
 ---
 
-## Installation & Exécution (Étapes)
+## Installation et Exécution
 
-### Cloner le repository
+### 1. Cloner le repository
 
 ```
 git clone https://github.com/shvvkz/mutlishop.git
 cd mutlishop
 ```
 
----
-
-### Créer le fichier .env
-
-Créer un fichier `.env` à la racine du projet et y copier les variables d’environnement indiquées ci-dessus.
-
----
-
-### Lancer l’application
+### 2. Lancer l’application
 
 ```
 docker compose up --build
@@ -104,9 +104,7 @@ Cette commande va :
 * Démarrer le conteneur de l’API
 * Connecter automatiquement l’API à la base de données
 
----
-
-### Accéder à l’API
+### 3. Accéder à l’API
 
 Une fois l’application démarrée avec succès :
 
@@ -118,7 +116,9 @@ L’API est alors prête à être utilisée.
 
 ---
 
-## Authentification
+# 3. Sécurité et Authentification
+
+## Authentification JWT
 
 L’authentification est gérée via JWT.
 
@@ -140,6 +140,8 @@ Les routes publiques ne nécessitent aucune authentification.
 
 ---
 
+# 4. Infrastructure et Base de Données
+
 ## Architecture Docker
 
 Le projet fonctionne avec deux services :
@@ -147,7 +149,7 @@ Le projet fonctionne avec deux services :
 * `postgres` → Base de données PostgreSQL
 * `api` → Backend Go
 
-PostgreSQL fonctionne en interne sur le port `5432`.
+PostgreSQL fonctionne en interne sur le port 5432.
 L’API est exposée sur `localhost:8080`.
 
 Aucune installation manuelle de base de données n’est nécessaire.
@@ -158,8 +160,8 @@ Aucune installation manuelle de base de données n’est nécessaire.
 
 Lors du premier démarrage, la base de données est automatiquement initialisée avec :
 
-* **2 Shops**
-* **1 SuperAdmin par shop**
+* 2 Shops
+* 1 SuperAdmin par shop
 
 Cela permet de tester immédiatement :
 
@@ -174,7 +176,9 @@ Chaque SuperAdmin est strictement lié à sa propre boutique, garantissant que :
 
 ---
 
-## Documentation API (Swagger)
+# 5. Documentation API
+
+## Swagger
 
 Le projet expose une interface de documentation interactive Swagger.
 
@@ -195,9 +199,9 @@ Cela rend l’API entièrement testable sans outil externe.
 
 ---
 
-## Architecture du Projet
+# 6. Architecture Backend
 
-### Comment nous avons structuré le projet
+## Structure du Projet
 
 Le projet est organisé selon une architecture en couches claire afin de séparer les responsabilités :
 
@@ -218,7 +222,7 @@ Cette séparation permet :
 
 ---
 
-### Comment nous avons planifié l’architecture
+## Planification de l’Architecture
 
 L’architecture a été pensée dès le départ autour de trois contraintes principales :
 
@@ -239,11 +243,11 @@ Cette planification a permis de conserver une architecture cohérente et évolut
 
 ---
 
-## Difficultés rencontrées
+# 7. Difficultés Rencontrées
 
 Durant le projet, nous n'avons presque pas rencontré de difficultés techniques majeures.
 
-La principale difficulté a été de maintenir correctement la gestion des droits entre les rôles **Admin** et **SuperAdmin** tout au long du développement.
+La principale difficulté a été de maintenir correctement la gestion des droits entre les rôles Admin et SuperAdmin tout au long du développement.
 
 Il a fallu s’assurer que chaque action respecte strictement les permissions associées au rôle et que l’isolation multi-tenant reste cohérente à chaque évolution du code.
 
@@ -251,70 +255,98 @@ Le reste du développement s’est déroulé de manière fluide.
 
 ---
 
-## Contexte et objectif du frontend
-Le frontend de MultiShop a ete concu comme une IHM simple et exploitable rapidement pour consommer les endpoints de l'API Go documentes via Swagger.
+# 8. Frontend
 
-L'objectif n'etait pas de produire un design complexe, mais une interface claire, testable et orientee flux metier:
-- consultation catalogue public,
-- authentification admin,
-- operations de gestion (produits, transactions, utilisateurs, dashboard).
+## Contexte et Objectif
+
+Le frontend de MultiShop a été conçu comme une IHM simple et exploitable rapidement pour consommer les endpoints de l’API Go documentés via Swagger.
+
+L’objectif n’était pas de produire un design complexe, mais une interface claire, testable et orientée flux métier :
+
+* Consultation catalogue public
+* Authentification admin
+* Opérations de gestion (produits, transactions, utilisateurs, dashboard)
+
+---
 
 ## Pourquoi Vue.js
-Vue.js a ete retenu pour les raisons suivantes:
-- prise en main rapide et DX simple,
-- composants lisibles et faciles a maintenir,
-- integration naturelle avec Vite pour un cycle dev/build rapide,
-- bonne adequation avec un projet API-first.
 
-Dans ce projet, Vue a permis de decouper clairement l'IHM en blocs fonctionnels (Header, formulaires, tableaux, toasts, etc.) sans surcharger les vues.
+Vue.js a été retenu pour les raisons suivantes :
+
+* Prise en main rapide et DX simple
+* Composants lisibles et faciles à maintenir
+* Intégration naturelle avec Vite pour un cycle dev/build rapide
+* Bonne adéquation avec un projet API-first
+
+Dans ce projet, Vue a permis de découper clairement l’IHM en blocs fonctionnels (Header, formulaires, tableaux, toasts, etc.) sans surcharger les vues.
+
+---
 
 ## Liaison Frontend / Backend
-L'integration front/back repose sur 4 principes:
 
-1. **Client API centralise**
-- `frontend/src/services/api.js`
-- toutes les requetes HTTP y sont regroupees (public + prive JWT), y compris l'evolution recente des transactions:
-  - `/api/transactions/sale`
-  - `/api/transactions/expense`
-  - `/api/transactions/withdrawal`
+L’intégration front/back repose sur quatre principes :
 
-2. **Gestion d'erreur uniforme**
-- `frontend/src/utils/http.js`
-- parsing safe des reponses + messages d'erreur homogenes.
+1. Client API centralisé
 
-3. **Auth JWT cote client**
-- stockage token local,
-- extraction des claims (`role`, `shop_id`) pour adapter l'IHM,
-- guards de navigation sur `/admin`.
+   * `frontend/src/services/api.js`
+   * Toutes les requêtes HTTP y sont regroupées (public + privé JWT), y compris l’évolution récente des transactions :
 
-4. **Proxy de dev Vite**
-- `frontend/vite.config.js`
-- en dev, `/api/*` est proxy vers `http://localhost:8080`.
+     * `/api/transactions/sale`
+     * `/api/transactions/expense`
+     * `/api/transactions/withdrawal`
 
-## Experience utilisateur recherchee
-L'UX ciblee est pragmatique: "simple, rapide, sans friction".
+2. Gestion d’erreur uniforme
 
-- **Vitrine publique**
-  - affichage du catalogue,
-  - CTA WhatsApp direct pour convertir la consultation en prise de contact.
+   * `frontend/src/utils/http.js`
+   * Parsing sécurisé des réponses et messages d’erreur homogènes.
 
-- **Espace admin**
-  - navigation par onglets (Dashboard, Produits, Transactions, Utilisateurs),
-  - formulaires explicites plutot que boites de dialogue systeme,
-  - feedback immediat via toasts (succes/erreur),
-  - restrictions d'interface selon role (`Admin` vs `SuperAdmin`) pour eviter les actions interdites.
+3. Auth JWT côté client
 
-- **Lisibilite technique**
-  - composants petits et reutilisables,
-  - separation claire entre presentation et appels API,
-  - adaptation rapide aux changements backend sans rework massif.
+   * Stockage du token
+   * Extraction des claims (`role`, `shop_id`) pour adapter l’IHM
+   * Guards de navigation sur `/admin`
 
-## Etat actuel
-L'IHM couvre les principaux endpoints du Swagger et est fonctionnelle pour les parcours metier standards.
+4. Proxy de développement Vite
 
-Des ameliorations futures restent possibles (pagination, recherche, edition inline, tests E2E), mais la base actuelle est stable et exploitable.
+   * `frontend/vite.config.js`
+   * En développement, `/api/*` est proxy vers `http://localhost:8080`.
 
-## Utilisation de l'IA
+---
 
-Pour voir l'utilisation de l'IA dans notre projet, nous avons créer un document que vous pouvez consulter ici:
+## Expérience Utilisateur
+
+L’UX ciblée est pragmatique : simple, rapide, sans friction.
+
+Vitrine publique :
+
+* Affichage du catalogue
+* CTA WhatsApp direct pour convertir la consultation en prise de contact
+
+Espace admin :
+
+* Navigation par onglets (Dashboard, Produits, Transactions, Utilisateurs)
+* Formulaires explicites plutôt que boîtes de dialogue système
+* Feedback immédiat via toasts (succès/erreur)
+* Restrictions d’interface selon rôle (Admin vs SuperAdmin)
+
+Lisibilité technique :
+
+* Composants petits et réutilisables
+* Séparation claire entre présentation et appels API
+* Adaptation rapide aux changements backend
+
+---
+
+## État Actuel
+
+L’IHM couvre les principaux endpoints du Swagger et est fonctionnelle pour les parcours métier standards.
+
+Des améliorations futures restent possibles (pagination, recherche, édition inline, tests E2E), mais la base actuelle est stable et exploitable.
+
+---
+
+# 9. Utilisation de l’IA
+
+Pour voir l’utilisation de l’IA dans notre projet, consultez le document suivant :
+
 [Voir le document IA](./ai.md)
