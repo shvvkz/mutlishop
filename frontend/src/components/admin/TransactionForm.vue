@@ -16,7 +16,15 @@
 
         <div class="col-md-4">
           <label class="form-label">Montant *</label>
-          <input v-model.number="form.amount" class="form-control" type="number" min="0" step="0.01" required />
+          <input
+            v-model.number="form.amount"
+            class="form-control"
+            type="number"
+            min="0"
+            step="0.01"
+            :required="form.type !== 'Sale'"
+            :disabled="form.type === 'Sale'"
+          />
         </div>
 
         <div class="col-md-4">
@@ -37,6 +45,7 @@
             type="number"
             min="1"
             step="1"
+            :required="form.type === 'Sale'"
             :disabled="form.type !== 'Sale'"
           />
         </div>
@@ -53,7 +62,7 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 
 defineProps({
   products: {
@@ -95,4 +104,16 @@ function submit() {
 
   emit("submit", payload);
 }
+
+watch(
+  () => form.type,
+  (type) => {
+    if (type === "Sale") {
+      form.amount = 0;
+      return;
+    }
+    form.product_id = 0;
+    form.quantity = 1;
+  },
+);
 </script>

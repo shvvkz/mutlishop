@@ -329,6 +329,12 @@ async function handleTransactionSubmit(payload) {
     if (payload.type === "Sale" && !payload.product_id) {
       throw new Error("Selectionne un produit pour une transaction Sale");
     }
+    if (payload.type === "Sale" && Number(payload.quantity || 0) <= 0) {
+      throw new Error("La quantite de vente doit etre superieure a 0");
+    }
+    if (payload.type !== "Sale" && Number(payload.amount || 0) <= 0) {
+      throw new Error("Le montant doit etre superieur a 0");
+    }
     await createTransaction(payload);
     setSuccess("Transaction creee");
     await Promise.all([loadTransactions(), loadProducts()]);

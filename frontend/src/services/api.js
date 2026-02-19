@@ -125,11 +125,40 @@ export function getTransactions() {
 }
 
 export function createTransaction(payload) {
-  return request("/api/transactions", {
-    method: "POST",
-    auth: true,
-    body: payload,
-  });
+  const type = String(payload?.type || "");
+
+  if (type === "Sale") {
+    return request("/api/transactions/sale", {
+      method: "POST",
+      auth: true,
+      body: {
+        product_id: Number(payload?.product_id || 0),
+        quantity: Number(payload?.quantity || 0),
+      },
+    });
+  }
+
+  if (type === "Expense") {
+    return request("/api/transactions/expense", {
+      method: "POST",
+      auth: true,
+      body: {
+        amount: Number(payload?.amount || 0),
+      },
+    });
+  }
+
+  if (type === "Withdrawal") {
+    return request("/api/transactions/withdrawal", {
+      method: "POST",
+      auth: true,
+      body: {
+        amount: Number(payload?.amount || 0),
+      },
+    });
+  }
+
+  throw new Error("Type de transaction non supporte");
 }
 
 export function deleteTransaction(id) {
