@@ -10,18 +10,28 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data"
+      - pgdata:/var/lib/postgresql/data
 
   api:
-    build: .
+    build: ./api
     container_name: multi_shop_api
     restart: always
     depends_on:
       - postgres
     env_file:
-      - .env
+      - ./api/.env
     ports:
       - "8080:8080"
+
+  frontend:
+    build: ./frontend
+    container_name: multi_shop_frontend
+    depends_on:
+      - api
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://api:8080
 
 volumes:
   pgdata:

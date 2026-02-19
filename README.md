@@ -1,8 +1,10 @@
-# 🛒 Electronic Multi-Shop API – Bootcamp Go
+# MultiShop API – Bootcamp Go
 
-## 📌 Description du Projet
+# 1. Présentation Générale
 
-Electronic Multi-Shop API est un backend développé en **Go** permettant de gérer plusieurs boutiques d’électronique avec une isolation stricte des données entre chaque boutique.
+## Description du Projet
+
+MultiShop API est un backend développé en Go permettant de gérer plusieurs boutiques d’électronique avec une isolation stricte des données entre chaque boutique.
 
 Chaque boutique possède :
 
@@ -18,20 +20,38 @@ Le système garantit :
 * La gestion des stocks
 * Une redirection WhatsApp pour les clients
 
+## Exposition des Services
+
+Une fois l’application démarrée avec Docker :
+
+* API Backend :
+  [http://localhost:8080](http://localhost:8080)
+
+* Documentation Swagger :
+  [http://localhost:8080/swagger/index.html#/](http://localhost:8080/swagger/index.html#/)
+
+* Site Web (Frontend Vue) :
+  [http://localhost:5173](http://localhost:5173)
+
+L’API et Swagger sont exposés par le service `api`, tandis que l’interface web est servie par le service `frontend`.
+
 ---
 
-## 🧱 Stack Technique
+## Stack Technique
 
-* **Go 1.25+**
-* **Gin** (framework HTTP)
-* **GORM** (ORM)
-* **PostgreSQL 16**
-* **Authentification JWT**
-* **Docker & Docker Compose**
+* Go 1.25+
+* Gin (framework HTTP)
+* GORM (ORM)
+* PostgreSQL 16
+* Authentification JWT
+* Docker & Docker Compose
+* Vue.js (Frontend)
 
 ---
 
-## 🖥 Prérequis
+# 2. Mise en Place du Projet
+
+## Prérequis
 
 Vous avez uniquement besoin de :
 
@@ -48,7 +68,7 @@ Vous n’avez PAS besoin d’installer manuellement :
 
 ---
 
-## ⚙️ Variables d’Environnement
+## Variables d’Environnement
 
 Un fichier `.env` est requis à la racine du projet.
 
@@ -65,33 +85,26 @@ JWT_SECRET=your_secret_key_here
 JWT_EXPIRE_HOURS=24
 ```
 
-Nous avons mit à disposition un fichier example.env.
+Nous avons mis à disposition un fichier `example.env`.
 
-Pour créer simplement votre fichier .env veuillez executer cette commande:
+Pour créer simplement votre fichier `.env`, veuillez exécuter la commande suivante :
+
 ```
-mv example.env .env
-``` 
+mv ./example.env ./api/.env
+```
 
 ---
 
-## 🚀 Installation & Exécution (Étapes)
+## Installation et Exécution
 
-### 1️⃣ Cloner le repository
+### 1. Cloner le repository
 
 ```
 git clone https://github.com/shvvkz/mutlishop.git
 cd mutlishop
 ```
 
----
-
-### 2️⃣ Créer le fichier .env
-
-Créer un fichier `.env` à la racine du projet et y copier les variables d’environnement indiquées ci-dessus.
-
----
-
-### 3️⃣ Lancer l’application
+### 2. Lancer l’application
 
 ```
 docker compose up --build
@@ -104,9 +117,7 @@ Cette commande va :
 * Démarrer le conteneur de l’API
 * Connecter automatiquement l’API à la base de données
 
----
-
-### 4️⃣ Accéder à l’API
+### 3. Accéder à l’API
 
 Une fois l’application démarrée avec succès :
 
@@ -118,7 +129,9 @@ L’API est alors prête à être utilisée.
 
 ---
 
-## 🔐 Authentification
+# 3. Sécurité et Authentification
+
+## Authentification JWT
 
 L’authentification est gérée via JWT.
 
@@ -140,26 +153,28 @@ Les routes publiques ne nécessitent aucune authentification.
 
 ---
 
-## 🐳 Architecture Docker
+# 4. Infrastructure et Base de Données
+
+## Architecture Docker
 
 Le projet fonctionne avec deux services :
 
 * `postgres` → Base de données PostgreSQL
 * `api` → Backend Go
 
-PostgreSQL fonctionne en interne sur le port `5432`.
+PostgreSQL fonctionne en interne sur le port 5432.
 L’API est exposée sur `localhost:8080`.
 
 Aucune installation manuelle de base de données n’est nécessaire.
 
 ---
 
-## 🏪 Données Initiales (Auto Seed)
+## Données Initiales (Auto Seed)
 
 Lors du premier démarrage, la base de données est automatiquement initialisée avec :
 
-* **2 Shops**
-* **1 SuperAdmin par shop**
+* 2 Shops
+* 1 SuperAdmin par shop
 
 Cela permet de tester immédiatement :
 
@@ -174,7 +189,9 @@ Chaque SuperAdmin est strictement lié à sa propre boutique, garantissant que :
 
 ---
 
-## 📚 Documentation API (Swagger)
+# 5. Documentation API
+
+## Swagger
 
 Le projet expose une interface de documentation interactive Swagger.
 
@@ -195,9 +212,9 @@ Cela rend l’API entièrement testable sans outil externe.
 
 ---
 
-## 🏗 Architecture du Projet
+# 6. Architecture Backend
 
-### Comment nous avons structuré le projet
+## Structure du Projet
 
 Le projet est organisé selon une architecture en couches claire afin de séparer les responsabilités :
 
@@ -218,7 +235,7 @@ Cette séparation permet :
 
 ---
 
-### Comment nous avons planifié l’architecture
+## Planification de l’Architecture
 
 L’architecture a été pensée dès le départ autour de trois contraintes principales :
 
@@ -239,11 +256,11 @@ Cette planification a permis de conserver une architecture cohérente et évolut
 
 ---
 
-## Difficultés rencontrées
+# 7. Difficultés Rencontrées
 
 Durant le projet, nous n'avons presque pas rencontré de difficultés techniques majeures.
 
-La principale difficulté a été de maintenir correctement la gestion des droits entre les rôles **Admin** et **SuperAdmin** tout au long du développement.
+La principale difficulté a été de maintenir correctement la gestion des droits entre les rôles Admin et SuperAdmin tout au long du développement.
 
 Il a fallu s’assurer que chaque action respecte strictement les permissions associées au rôle et que l’isolation multi-tenant reste cohérente à chaque évolution du code.
 
@@ -251,7 +268,98 @@ Le reste du développement s’est déroulé de manière fluide.
 
 ---
 
-## Utilisation de l'IA
+# 8. Frontend
 
-Pour voir l'utilisation de l'IA dans notre projet, nous avons créer un document que vous pouvez consulter ici:
+## Contexte et Objectif
+
+Le frontend de MultiShop a été conçu comme une IHM simple et exploitable rapidement pour consommer les endpoints de l’API Go documentés via Swagger.
+
+L’objectif n’était pas de produire un design complexe, mais une interface claire, testable et orientée flux métier :
+
+* Consultation catalogue public
+* Authentification admin
+* Opérations de gestion (produits, transactions, utilisateurs, dashboard)
+
+---
+
+## Pourquoi Vue.js
+
+Vue.js a été retenu pour les raisons suivantes :
+
+* Prise en main rapide et DX simple
+* Composants lisibles et faciles à maintenir
+* Intégration naturelle avec Vite pour un cycle dev/build rapide
+* Bonne adéquation avec un projet API-first
+
+Dans ce projet, Vue a permis de découper clairement l’IHM en blocs fonctionnels (Header, formulaires, tableaux, toasts, etc.) sans surcharger les vues.
+
+---
+
+## Liaison Frontend / Backend
+
+L’intégration front/back repose sur quatre principes :
+
+1. Client API centralisé
+
+   * `frontend/src/services/api.js`
+   * Toutes les requêtes HTTP y sont regroupées (public + privé JWT), y compris l’évolution récente des transactions :
+
+     * `/api/transactions/sale`
+     * `/api/transactions/expense`
+     * `/api/transactions/withdrawal`
+
+2. Gestion d’erreur uniforme
+
+   * `frontend/src/utils/http.js`
+   * Parsing sécurisé des réponses et messages d’erreur homogènes.
+
+3. Auth JWT côté client
+
+   * Stockage du token
+   * Extraction des claims (`role`, `shop_id`) pour adapter l’IHM
+   * Guards de navigation sur `/admin`
+
+4. Proxy de développement Vite
+
+   * `frontend/vite.config.js`
+   * En développement, `/api/*` est proxy vers `http://localhost:8080`.
+
+---
+
+## Expérience Utilisateur
+
+L’UX ciblée est pragmatique : simple, rapide, sans friction.
+
+Vitrine publique :
+
+* Affichage du catalogue
+* CTA WhatsApp direct pour convertir la consultation en prise de contact
+
+Espace admin :
+
+* Navigation par onglets (Dashboard, Produits, Transactions, Utilisateurs)
+* Formulaires explicites plutôt que boîtes de dialogue système
+* Feedback immédiat via toasts (succès/erreur)
+* Restrictions d’interface selon rôle (Admin vs SuperAdmin)
+
+Lisibilité technique :
+
+* Composants petits et réutilisables
+* Séparation claire entre présentation et appels API
+* Adaptation rapide aux changements backend
+
+---
+
+## État Actuel
+
+L’IHM couvre les principaux endpoints du Swagger et est fonctionnelle pour les parcours métier standards.
+
+Des améliorations futures restent possibles (pagination, recherche, édition inline, tests E2E), mais la base actuelle est stable et exploitable.
+
+---
+
+# 9. Utilisation de l’IA
+
+Pour voir l’utilisation de l’IA dans notre projet, consultez le document suivant :
+
 [Voir le document IA](./ai.md)
