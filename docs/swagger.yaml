@@ -45,18 +45,22 @@ definitions:
     - name
     - password
     type: object
-  controllers.TransactionInput:
+  controllers.TransactionExpenseInput:
     properties:
       amount:
         type: number
+    type: object
+  controllers.TransactionSaleInput:
+    properties:
       product_id:
         type: integer
       quantity:
         type: integer
-      type:
-        type: string
-    required:
-    - type
+    type: object
+  controllers.TransactionWithdrawalInput:
+    properties:
+      amount:
+        type: number
     type: object
   controllers.UpdateWhatsAppInput:
     properties:
@@ -459,46 +463,6 @@ paths:
       summary: Get all transactions of the current shop
       tags:
       - Transactions
-    post:
-      consumes:
-      - application/json
-      description: Allows Admin or SuperAdmin to create a transaction (Sale, Expense,
-        Withdrawal). For Sale, stock is validated and updated automatically.
-      parameters:
-      - description: Transaction payload
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.TransactionInput'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Transaction created successfully
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Invalid input, insufficient stock, or product not found
-          schema:
-            additionalProperties: true
-            type: object
-        "401":
-          description: Unauthorized
-          schema:
-            additionalProperties: true
-            type: object
-        "403":
-          description: Forbidden
-          schema:
-            additionalProperties: true
-            type: object
-      security:
-      - BearerAuth: []
-      summary: Create a new transaction
-      tags:
-      - Transactions
   /api/transactions/{id}:
     delete:
       description: Allows Admin or SuperAdmin to delete a transaction belonging to
@@ -535,6 +499,131 @@ paths:
       security:
       - BearerAuth: []
       summary: Delete a transaction
+      tags:
+      - Transactions
+  /api/transactions/expense:
+    post:
+      consumes:
+      - application/json
+      description: Allows Admin or SuperAdmin to create an Expense transaction. The
+        request must include the amount of the expense.
+      parameters:
+      - description: Transaction payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.TransactionExpenseInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Transaction created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new Expense transaction
+      tags:
+      - Transactions
+  /api/transactions/sale:
+    post:
+      consumes:
+      - application/json
+      description: Allows Admin or SuperAdmin to create a Sale transaction. The request
+        must include the product ID and quantity. The system will automatically calculate
+        the total amount based on the product price and quantity, and reduce the product
+        stock accordingly.
+      parameters:
+      - description: Transaction payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.TransactionSaleInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Transaction created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid input, insufficient stock, or product not found
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new Sale transaction
+      tags:
+      - Transactions
+  /api/transactions/withdrawal:
+    post:
+      consumes:
+      - application/json
+      description: Allows Admin or SuperAdmin to create a Withdrawal transaction.
+        The request must include the amount of the withdrawal.
+      parameters:
+      - description: Transaction payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.TransactionWithdrawalInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Transaction created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new Withdrawal transaction
       tags:
       - Transactions
   /api/users:

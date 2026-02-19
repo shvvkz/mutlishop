@@ -16,9 +16,19 @@ func RegisterTransactionRoutes(rg *gin.RouterGroup) {
 		controllers.GetTransactions,
 	)
 
-	transactions.POST("",
+	transactions.POST("/sale",
 		middleware.RequireRole("SuperAdmin", "Admin"),
-		controllers.CreateTransaction,
+		controllers.CreateTransactionSale,
+	)
+
+	transactions.POST("/expense",
+		middleware.RequireRole("SuperAdmin", "Admin"),
+		controllers.CreateTransactionExpense,
+	)
+
+	transactions.POST("/withdrawal",
+		middleware.RequireRole("SuperAdmin", "Admin"),
+		controllers.CreateTransactionWithdrawal,
 	)
 
 	transactions.DELETE("/:id",

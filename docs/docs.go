@@ -543,14 +543,16 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/transactions/expense": {
             "post": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Allows Admin or SuperAdmin to create a transaction (Sale, Expense, Withdrawal). For Sale, stock is validated and updated automatically.",
+                "description": "Allows Admin or SuperAdmin to create an Expense transaction. The request must include the amount of the expense.",
                 "consumes": [
                     "application/json"
                 ],
@@ -560,7 +562,7 @@ const docTemplate = `{
                 "tags": [
                     "Transactions"
                 ],
-                "summary": "Create a new transaction",
+                "summary": "Create a new Expense transaction",
                 "parameters": [
                     {
                         "description": "Transaction payload",
@@ -568,7 +570,68 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.TransactionInput"
+                            "$ref": "#/definitions/controllers.TransactionExpenseInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Transaction created successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transactions/sale": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Allows Admin or SuperAdmin to create a Sale transaction. The request must include the product ID and quantity. The system will automatically calculate the total amount based on the product price and quantity, and reduce the product stock accordingly.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Create a new Sale transaction",
+                "parameters": [
+                    {
+                        "description": "Transaction payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TransactionSaleInput"
                         }
                     }
                 ],
@@ -582,6 +645,67 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Invalid input, insufficient stock, or product not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transactions/withdrawal": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Allows Admin or SuperAdmin to create a Withdrawal transaction. The request must include the amount of the withdrawal.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Create a new Withdrawal transaction",
+                "parameters": [
+                    {
+                        "description": "Transaction payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TransactionWithdrawalInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Transaction created successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -961,23 +1085,30 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.TransactionInput": {
+        "controllers.TransactionExpenseInput": {
             "type": "object",
-            "required": [
-                "type"
-            ],
             "properties": {
                 "amount": {
                     "type": "number"
-                },
+                }
+            }
+        },
+        "controllers.TransactionSaleInput": {
+            "type": "object",
+            "properties": {
                 "product_id": {
                     "type": "integer"
                 },
                 "quantity": {
                     "type": "integer"
-                },
-                "type": {
-                    "type": "string"
+                }
+            }
+        },
+        "controllers.TransactionWithdrawalInput": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
                 }
             }
         },
