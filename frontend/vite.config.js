@@ -8,13 +8,13 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://api:8080',
         changeOrigin: true
       }
     }
   },
   build: {
-    outDir: path.resolve(__dirname, '../public'),
+    outDir: 'dist',
     assetsDir: 'static',
     emptyOutDir: false
   }

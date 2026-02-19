@@ -1,6 +1,6 @@
-# 🤖 Utilisation de l’Intelligence Artificielle dans le Projet
+# Utilisation de l’Intelligence Artificielle dans le Projet Go
 
-## 2️⃣ Outils IA utilisés
+## Outils IA utilisés
 
 Dans le cadre de ce projet, nous avons utilisé principalement :
 
@@ -12,7 +12,7 @@ L’IA a été utilisée comme un outil d’assistance et d’accélération, et
 
 ---
 
-## 📌 Rôle de l’IA dans le projet
+## Rôle de l’IA dans le projet
 
 L’IA a été utilisée principalement pour :
 
@@ -34,7 +34,7 @@ L’architecture et la séparation en couches ont été pensées et mises en pla
 
 ---
 
-## 📝 Exemple de Prompt utilisé (Documentation Swagger)
+## Exemple de Prompt utilisé (Documentation Swagger)
 
 Exemple de fonction :
 
@@ -67,7 +67,7 @@ Nous avons ensuite :
 
 ---
 
-## ⚙️ Méthode de Travail avec l’IA
+## Méthode de Travail avec l’IA
 
 L’IA a été utilisée comme un outil pour produire du code plus rapidement.
 
@@ -84,9 +84,9 @@ Aucun code n’a été intégré sans validation humaine.
 
 ---
 
-## 7️⃣ Analyse Critique de l’IA
+## Analyse Critique de l’IA
 
-### ✅ Là où l’IA nous a fait gagner du temps
+### Là où l’IA nous a fait gagner du temps
 
 * Génération rapide de logique métier répétitive
 * Création des annotations Swagger
@@ -97,7 +97,7 @@ Elle a permis d’accélérer considérablement la phase d’implémentation des
 
 ---
 
-### ⚠️ Là où l’IA nous a fait perdre du temps
+### Là où l’IA nous a fait perdre du temps
 
 * Certaines réponses généraient du code incorrect ou incomplet
 * Des incohérences dans les types ou les signatures
@@ -108,7 +108,7 @@ Cela nécessitait une vérification approfondie.
 
 ---
 
-### 🔎 Ce que nous avons dû corriger manuellement
+### Ce que nous avons dû corriger manuellement
 
 * Adaptation précise des règles de permissions
 * Correction de certaines requêtes GORM
@@ -119,10 +119,22 @@ L’IA a été utilisée comme un accélérateur, mais la responsabilité finale
 
 ---
 
-## 🎯 Conclusion
+## Conclusion
 
 L’IA a été un outil d’assistance et de productivité.
 
 Elle n’a pas remplacé la réflexion architecturale ni la validation technique.
 
 Le projet a été conçu, structuré et vérifié manuellement, l’IA ayant uniquement servi à accélérer certaines parties spécifiques comme la logique métier et la documentation.
+
+# Utilisation de l’Intelligence Artificielle dans le Projet Vue
+
+## Realisation avec l'aide de l'IA
+L'implementation a été accélerée avec un assistant IA pour:
+- proposer une architecture frontend modulaire,
+- generer des composants Vue reutilisables,
+- adapter rapidement l'IHM quand les endpoints backend ont evolue,
+- securiser l'integration via validations et gestion d'erreurs.
+
+L'IA a servi de copilote technique, mais les choix metier (roles, parcours, priorites) ont ete valides au fil de l'eau pendant le developpement.
+

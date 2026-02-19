@@ -1,6 +1,6 @@
-# 🛒 Electronic Multi-Shop API – Bootcamp Go
+# Electronic Multi-Shop API – Bootcamp Go
 
-## 📌 Description du Projet
+## Description du Projet
 
 Electronic Multi-Shop API est un backend développé en **Go** permettant de gérer plusieurs boutiques d’électronique avec une isolation stricte des données entre chaque boutique.
 
@@ -20,7 +20,7 @@ Le système garantit :
 
 ---
 
-## 🧱 Stack Technique
+## Stack Technique
 
 * **Go 1.25+**
 * **Gin** (framework HTTP)
@@ -31,7 +31,7 @@ Le système garantit :
 
 ---
 
-## 🖥 Prérequis
+## Prérequis
 
 Vous avez uniquement besoin de :
 
@@ -48,7 +48,7 @@ Vous n’avez PAS besoin d’installer manuellement :
 
 ---
 
-## ⚙️ Variables d’Environnement
+## Variables d’Environnement
 
 Un fichier `.env` est requis à la racine du projet.
 
@@ -69,14 +69,14 @@ Nous avons mit à disposition un fichier example.env.
 
 Pour créer simplement votre fichier .env veuillez executer cette commande:
 ```
-mv example.env .env
+mv ./example.env ./api/.env
 ``` 
 
 ---
 
-## 🚀 Installation & Exécution (Étapes)
+## Installation & Exécution (Étapes)
 
-### 1️⃣ Cloner le repository
+### Cloner le repository
 
 ```
 git clone https://github.com/shvvkz/mutlishop.git
@@ -85,13 +85,13 @@ cd mutlishop
 
 ---
 
-### 2️⃣ Créer le fichier .env
+### Créer le fichier .env
 
 Créer un fichier `.env` à la racine du projet et y copier les variables d’environnement indiquées ci-dessus.
 
 ---
 
-### 3️⃣ Lancer l’application
+### Lancer l’application
 
 ```
 docker compose up --build
@@ -106,7 +106,7 @@ Cette commande va :
 
 ---
 
-### 4️⃣ Accéder à l’API
+### Accéder à l’API
 
 Une fois l’application démarrée avec succès :
 
@@ -118,7 +118,7 @@ L’API est alors prête à être utilisée.
 
 ---
 
-## 🔐 Authentification
+## Authentification
 
 L’authentification est gérée via JWT.
 
@@ -140,7 +140,7 @@ Les routes publiques ne nécessitent aucune authentification.
 
 ---
 
-## 🐳 Architecture Docker
+## Architecture Docker
 
 Le projet fonctionne avec deux services :
 
@@ -154,7 +154,7 @@ Aucune installation manuelle de base de données n’est nécessaire.
 
 ---
 
-## 🏪 Données Initiales (Auto Seed)
+## Données Initiales (Auto Seed)
 
 Lors du premier démarrage, la base de données est automatiquement initialisée avec :
 
@@ -174,7 +174,7 @@ Chaque SuperAdmin est strictement lié à sa propre boutique, garantissant que :
 
 ---
 
-## 📚 Documentation API (Swagger)
+## Documentation API (Swagger)
 
 Le projet expose une interface de documentation interactive Swagger.
 
@@ -195,7 +195,7 @@ Cela rend l’API entièrement testable sans outil externe.
 
 ---
 
-## 🏗 Architecture du Projet
+## Architecture du Projet
 
 ### Comment nous avons structuré le projet
 
@@ -250,6 +250,69 @@ Il a fallu s’assurer que chaque action respecte strictement les permissions as
 Le reste du développement s’est déroulé de manière fluide.
 
 ---
+
+## Contexte et objectif du frontend
+Le frontend de MultiShop a ete concu comme une IHM simple et exploitable rapidement pour consommer les endpoints de l'API Go documentes via Swagger.
+
+L'objectif n'etait pas de produire un design complexe, mais une interface claire, testable et orientee flux metier:
+- consultation catalogue public,
+- authentification admin,
+- operations de gestion (produits, transactions, utilisateurs, dashboard).
+
+## Pourquoi Vue.js
+Vue.js a ete retenu pour les raisons suivantes:
+- prise en main rapide et DX simple,
+- composants lisibles et faciles a maintenir,
+- integration naturelle avec Vite pour un cycle dev/build rapide,
+- bonne adequation avec un projet API-first.
+
+Dans ce projet, Vue a permis de decouper clairement l'IHM en blocs fonctionnels (Header, formulaires, tableaux, toasts, etc.) sans surcharger les vues.
+
+## Liaison Frontend / Backend
+L'integration front/back repose sur 4 principes:
+
+1. **Client API centralise**
+- `frontend/src/services/api.js`
+- toutes les requetes HTTP y sont regroupees (public + prive JWT), y compris l'evolution recente des transactions:
+  - `/api/transactions/sale`
+  - `/api/transactions/expense`
+  - `/api/transactions/withdrawal`
+
+2. **Gestion d'erreur uniforme**
+- `frontend/src/utils/http.js`
+- parsing safe des reponses + messages d'erreur homogenes.
+
+3. **Auth JWT cote client**
+- stockage token local,
+- extraction des claims (`role`, `shop_id`) pour adapter l'IHM,
+- guards de navigation sur `/admin`.
+
+4. **Proxy de dev Vite**
+- `frontend/vite.config.js`
+- en dev, `/api/*` est proxy vers `http://localhost:8080`.
+
+## Experience utilisateur recherchee
+L'UX ciblee est pragmatique: "simple, rapide, sans friction".
+
+- **Vitrine publique**
+  - affichage du catalogue,
+  - CTA WhatsApp direct pour convertir la consultation en prise de contact.
+
+- **Espace admin**
+  - navigation par onglets (Dashboard, Produits, Transactions, Utilisateurs),
+  - formulaires explicites plutot que boites de dialogue systeme,
+  - feedback immediat via toasts (succes/erreur),
+  - restrictions d'interface selon role (`Admin` vs `SuperAdmin`) pour eviter les actions interdites.
+
+- **Lisibilite technique**
+  - composants petits et reutilisables,
+  - separation claire entre presentation et appels API,
+  - adaptation rapide aux changements backend sans rework massif.
+
+## Etat actuel
+L'IHM couvre les principaux endpoints du Swagger et est fonctionnelle pour les parcours metier standards.
+
+Des ameliorations futures restent possibles (pagination, recherche, edition inline, tests E2E), mais la base actuelle est stable et exploitable.
 
 ## Utilisation de l'IA
 
