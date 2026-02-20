@@ -46,6 +46,23 @@ definitions:
     - name
     - password
     type: object
+  controllers.ShopInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      whatsapp_number:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - whatsapp_number
+    type: object
   controllers.TransactionExpenseInput:
     properties:
       amount:
@@ -372,6 +389,56 @@ paths:
             additionalProperties: true
             type: object
       summary: Generate WhatsApp link for a product
+      tags:
+      - Public
+  /api/public/shop:
+    get:
+      description: Retrieves a list of all shops with their basic details. Accessible
+        without authentication.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of shops
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get list of all shops
+      tags:
+      - Public
+    post:
+      consumes:
+      - application/json
+      description: Creates a new shop along with a SuperAdmin user. The provided email
+        must be unique across all users.
+      parameters:
+      - description: Shop creation payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ShopInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Shop and SuperAdmin created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid input or email already exists
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new shop with SuperAdmin
       tags:
       - Public
   /api/reports/dashboard:

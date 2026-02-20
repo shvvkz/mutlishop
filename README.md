@@ -104,7 +104,13 @@ git clone https://github.com/shvvkz/mutlishop.git
 cd mutlishop
 ```
 
-### 2. Lancer l’application
+### 3. Déplacer les variables d'envrionnement
+
+```
+mv ./example.env ./api/.env
+```
+
+### 3. Lancer l’application
 
 ```
 docker compose up --build
@@ -117,7 +123,7 @@ Cette commande va :
 * Démarrer le conteneur de l’API
 * Connecter automatiquement l’API à la base de données
 
-### 3. Accéder à l’API
+### 4. Accéder à l’API
 
 Une fois l’application démarrée avec succès :
 

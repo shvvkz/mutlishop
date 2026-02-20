@@ -292,6 +292,77 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/public/shop": {
+            "get": {
+                "description": "Retrieves a list of all shops with their basic details. Accessible without authentication.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Get list of all shops",
+                "responses": {
+                    "200": {
+                        "description": "List of shops",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new shop along with a SuperAdmin user. The provided email must be unique across all users.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Create a new shop with SuperAdmin",
+                "parameters": [
+                    {
+                        "description": "Shop creation payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ShopInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Shop and SuperAdmin created successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input or email already exists",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/api/public/{shopID}/products": {
             "get": {
                 "description": "Returns the list of publicly visible products for a specific shop. PurchasePrice is never exposed. Accessible without authentication.",
@@ -1105,6 +1176,30 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.ShopInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password",
+                "whatsapp_number"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "whatsapp_number": {
                     "type": "string"
                 }
             }

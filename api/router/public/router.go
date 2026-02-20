@@ -8,4 +8,5 @@ func RegisterRoutes(r *gin.Engine) {
 
 	RegisterAuthRoutes(publicGroup)
 	RegisterPublicRoutes(publicGroup)
+	RegisterShopRoutes(publicGroup)
 }
