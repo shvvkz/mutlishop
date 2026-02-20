@@ -35,14 +35,19 @@ func GetProducts(c *gin.Context) {
 	utils.JSON(c, http.StatusOK, products)
 }
 
+func getCategoryName(c *gin.Context) {
+	category := []string{"Phone", "Television", "Charger", "Computer", "Peripheral"}
+	utils.JSON(c, http.StatusOK, category)
+}
+
 type ProductInput struct {
-	Name          string   `json:"name" binding:"required"`
-	Description   string   `json:"description"`
-	Category      string   `json:"category"`
-	PurchasePrice *float64 `json:"purchase_price" binding:"required"`
-	SellingPrice  *float64 `json:"selling_price" binding:"required"`
-	Stock         *int     `json:"stock" binding:"required"`
-	ImageURL      string   `json:"image_url"`
+	Name          string                 `json:"name" binding:"required"`
+	Description   string                 `json:"description"`
+	Category      models.ProductCategory `json:"category" binding:"required"`
+	PurchasePrice *float64               `json:"purchase_price" binding:"required"`
+	SellingPrice  *float64               `json:"selling_price" binding:"required"`
+	Stock         *int                   `json:"stock" binding:"required"`
+	ImageURL      string                 `json:"image_url"`
 }
 
 // CreateProduct godoc
@@ -66,6 +71,11 @@ func CreateProduct(c *gin.Context) {
 	var input ProductInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		utils.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if !models.IsValidCategory(input.Category) {
+		utils.Error(c, http.StatusBadRequest, "invalid category")
 		return
 	}
 
@@ -148,6 +158,11 @@ func UpdateProduct(c *gin.Context) {
 	var input ProductInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		utils.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if !models.IsValidCategory(input.Category) {
+		utils.Error(c, http.StatusBadRequest, "invalid category")
 		return
 	}
 

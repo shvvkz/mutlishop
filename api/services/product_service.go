@@ -38,7 +38,7 @@ func GetProducts(shopID uint, role string) ([]ProductResponse, error) {
 			ID:           p.ID,
 			Name:         p.Name,
 			Description:  p.Description,
-			Category:     p.Category,
+			Category:     string(p.Category),
 			SellingPrice: p.SellingPrice,
 			Stock:        p.Stock,
 			ImageURL:     p.ImageURL,

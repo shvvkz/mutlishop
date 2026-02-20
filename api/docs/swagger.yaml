@@ -13,7 +13,7 @@ definitions:
   controllers.ProductInput:
     properties:
       category:
-        type: string
+        $ref: '#/definitions/models.ProductCategory'
       description:
         type: string
       image_url:
@@ -27,6 +27,7 @@ definitions:
       stock:
         type: integer
     required:
+    - category
     - name
     - purchase_price
     - selling_price
@@ -69,6 +70,20 @@ definitions:
     required:
     - whatsapp_number
     type: object
+  models.ProductCategory:
+    enum:
+    - Phone
+    - Television
+    - Charger
+    - Computer
+    - Peripheral
+    type: string
+    x-enum-varnames:
+    - Phone
+    - Television
+    - Charger
+    - Computer
+    - Peripheral
   services.DashboardResponse:
     properties:
       low_stock_products:
@@ -783,6 +798,21 @@ paths:
       summary: Update user role
       tags:
       - Users
+  /public/categories:
+    get:
+      description: Returns all allowed product categories.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      summary: Get available product categories
+      tags:
+      - Public
 securityDefinitions:
   BearerAuth:
     in: header

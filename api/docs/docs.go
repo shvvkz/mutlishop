@@ -1016,6 +1016,29 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/public/categories": {
+            "get": {
+                "description": "Returns all allowed product categories.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Get available product categories",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1037,6 +1060,7 @@ const docTemplate = `{
         "controllers.ProductInput": {
             "type": "object",
             "required": [
+                "category",
                 "name",
                 "purchase_price",
                 "selling_price",
@@ -1044,7 +1068,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "category": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "description": {
                     "type": "string"
@@ -1122,6 +1146,23 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "models.ProductCategory": {
+            "type": "string",
+            "enum": [
+                "Phone",
+                "Television",
+                "Charger",
+                "Computer",
+                "Peripheral"
+            ],
+            "x-enum-varnames": [
+                "Phone",
+                "Television",
+                "Charger",
+                "Computer",
+                "Peripheral"
+            ]
         },
         "services.DashboardResponse": {
             "type": "object",

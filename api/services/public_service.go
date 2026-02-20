@@ -54,7 +54,7 @@ func GetPublicProducts(shopID uint) ([]PublicProductResponse, error) {
 			ID:           p.ID,
 			Name:         p.Name,
 			Description:  p.Description,
-			Category:     p.Category,
+			Category:     string(p.Category),
 			SellingPrice: p.SellingPrice,
 			Stock:        p.Stock,
 			ImageURL:     p.ImageURL,

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"multishop/models"
 	"multishop/services"
 	"multishop/utils"
 
@@ -76,4 +77,22 @@ func GetWhatsAppLink(c *gin.Context) {
 	utils.JSON(c, http.StatusOK, gin.H{
 		"whatsapp_url": link,
 	})
+}
+
+// GetCategories godoc
+// @Summary Get available product categories
+// @Description Returns all allowed product categories.
+// @Tags Public
+// @Produce json
+// @Success 200 {array} string
+// @Router /public/categories [get]
+func GetCategories(c *gin.Context) {
+
+	var categories []string
+
+	for _, cat := range models.AllProductCategories {
+		categories = append(categories, string(cat))
+	}
+
+	utils.JSON(c, http.StatusOK, categories)
 }
