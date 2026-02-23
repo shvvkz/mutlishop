@@ -9,13 +9,21 @@
 
     <HeroSection />
 
-    <ShopSelector v-model="shopId" :loading="loading" @load="loadProducts" />
+    <ShopCreationForm :loading="creatingShop" @submit="handleCreateShop" />
+
+    <ShopSelector
+      v-model="shopId"
+      :loading="loading"
+      :shops="shops"
+      @load="loadProducts"
+      @reload-shops="loadShops"
+    />
 
     <ProductStats :products="products" />
 
     <div class="row g-3">
       <div class="col-md-6 col-xl-4" v-for="product in products" :key="product.id">
-        <ProductCard :product="product">
+        <ProductCard :product="product" :show-stock="false">
           <template #actions>
             <button class="btn btn-success btn-sm" @click="openWhatsApp(product.id)">
               Commander sur WhatsApp
@@ -33,12 +41,20 @@ import ProductCard from "../components/ProductCard.vue";
 import ToastMessage from "../components/ToastMessage.vue";
 import HeroSection from "../components/public/HeroSection.vue";
 import ProductStats from "../components/public/ProductStats.vue";
+import ShopCreationForm from "../components/public/ShopCreationForm.vue";
 import ShopSelector from "../components/public/ShopSelector.vue";
-import { getPublicProducts, getPublicWhatsApp } from "../services/api";
+import {
+  createPublicShop,
+  getPublicProducts,
+  getPublicShops,
+  getPublicWhatsApp,
+} from "../services/api";
 
-const shopId = ref("1");
+const shopId = ref("");
+const shops = ref([]);
 const products = ref([]);
 const loading = ref(false);
+const creatingShop = ref(false);
 const toastVisible = ref(false);
 const toastMessage = ref("");
 const toastType = ref("info");
@@ -57,7 +73,33 @@ function extractArray(payload) {
   return payload?.data || [];
 }
 
+function pickDefaultShop(list) {
+  if (!Array.isArray(list) || !list.length) return "";
+  const activeShop = list.find((shop) => shop.active);
+  return String((activeShop || list[0]).id);
+}
+
+async function loadShops() {
+  try {
+    const payload = await getPublicShops();
+    const list = extractArray(payload);
+    shops.value = list;
+
+    if (!shopId.value || !list.some((shop) => String(shop.id) === shopId.value)) {
+      shopId.value = pickDefaultShop(list);
+    }
+  } catch (error) {
+    showToast(`Erreur: ${error.message}`, "error");
+  }
+}
+
 async function loadProducts() {
+  if (!shopId.value) {
+    products.value = [];
+    showToast("Selectionne une boutique", "info");
+    return;
+  }
+
   loading.value = true;
 
   try {
@@ -67,6 +109,24 @@ async function loadProducts() {
     showToast(`Erreur: ${error.message}`, "error");
   } finally {
     loading.value = false;
+  }
+}
+
+async function handleCreateShop(payload) {
+  creatingShop.value = true;
+  try {
+    const response = await createPublicShop(payload);
+    showToast("Shop et SuperAdmin crees", "success");
+    await loadShops();
+    const createdShopId = String(response?.data?.shop_id || response?.shop_id || "");
+    if (createdShopId) {
+      shopId.value = createdShopId;
+      await loadProducts();
+    }
+  } catch (error) {
+    showToast(`Erreur: ${error.message}`, "error");
+  } finally {
+    creatingShop.value = false;
   }
 }
 
@@ -86,5 +146,10 @@ async function openWhatsApp(productId) {
   }
 }
 
-onMounted(loadProducts);
+onMounted(async () => {
+  await loadShops();
+  if (shopId.value) {
+    await loadProducts();
+  }
+});
 </script>
