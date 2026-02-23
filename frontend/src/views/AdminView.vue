@@ -33,6 +33,7 @@
       <ProductForm
         :mode="formMode"
         :initial-product="editingProduct"
+        :categories="categories"
         :loading="submittingProduct"
         @submit="handleProductSubmit"
         @cancel="cancelEdit"
@@ -81,13 +82,16 @@
       <UsersTable :users="users" @change-role="changeUserRole" @delete="removeUser" />
     </div>
 
-    <div v-if="activeTab === 'dashboard' && isSuperAdmin">
-      <ShopWhatsAppForm
-        v-model="shopWhatsAppNumber"
-        :loading="submittingWhatsApp"
-        @submit="submitShopWhatsApp"
-      />
-      <DashboardMetrics :dashboard="dashboard" />
+    <div v-if="activeTab === 'dashboard'">
+      <template v-if="isSuperAdmin">
+        <ShopWhatsAppForm
+          v-model="shopWhatsAppNumber"
+          :loading="submittingWhatsApp"
+          @submit="submitShopWhatsApp"
+        />
+        <DashboardMetrics :dashboard="dashboard" />
+      </template>
+      <AdminDashboardMetrics v-else :products="products" :transactions="transactions" />
     </div>
   </section>
 </template>
@@ -95,6 +99,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import AdminDashboardMetrics from "../components/admin/AdminDashboardMetrics.vue";
 import DashboardMetrics from "../components/admin/DashboardMetrics.vue";
 import ProductForm from "../components/admin/ProductForm.vue";
 import ShopWhatsAppForm from "../components/admin/ShopWhatsAppForm.vue";
@@ -113,6 +118,7 @@ import {
   deleteUser,
   getAuthInfo,
   getDashboard,
+  getPublicCategories,
   getProducts,
   getTransactions,
   getUsers,
@@ -127,6 +133,7 @@ const router = useRouter();
 const ALL_TABS = ["dashboard", "products", "transactions", "users"];
 
 const authInfo = ref(getAuthInfo());
+const categories = ref([]);
 const products = ref([]);
 const transactions = ref([]);
 const users = ref([]);
@@ -145,7 +152,7 @@ const shopWhatsAppNumber = ref("");
 
 const currentRole = computed(() => authInfo.value?.role || "");
 const isSuperAdmin = computed(() => currentRole.value === "SuperAdmin");
-const allowedTabs = computed(() => (isSuperAdmin.value ? ALL_TABS : ["products", "transactions"]));
+const allowedTabs = computed(() => (isSuperAdmin.value ? ALL_TABS : ["dashboard", "products", "transactions"]));
 
 const showPurchasePrice = computed(() => {
   return products.value.some((product) => product.purchase_price !== undefined);
@@ -167,7 +174,7 @@ function tabLabel(tab) {
 }
 
 function getDefaultTab() {
-  return isSuperAdmin.value ? "dashboard" : "products";
+  return "dashboard";
 }
 
 function extractArray(payload) {
@@ -225,6 +232,11 @@ async function switchTab(tab, syncUrl = true) {
 
   if (nextTab === "dashboard" && isSuperAdmin.value) {
     await loadDashboard();
+    return;
+  }
+
+  if (nextTab === "dashboard") {
+    await Promise.all([loadProducts(), loadTransactions()]);
   }
 }
 
@@ -240,6 +252,15 @@ async function loadProducts() {
     const payload = await getProducts();
     products.value = extractArray(payload);
     clearStatus();
+  } catch (error) {
+    setError(error);
+  }
+}
+
+async function loadCategories() {
+  try {
+    const payload = await getPublicCategories();
+    categories.value = extractArray(payload);
   } catch (error) {
     setError(error);
   }
@@ -412,6 +433,7 @@ async function submitShopWhatsApp(number) {
 }
 
 onMounted(async () => {
+  await loadCategories();
   await loadProducts();
   await loadTransactions();
   if (isSuperAdmin.value) {

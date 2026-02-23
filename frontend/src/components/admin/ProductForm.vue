@@ -16,7 +16,12 @@
 
         <div class="col-md-6">
           <label class="form-label">Categorie</label>
-          <input v-model.trim="form.category" class="form-control" />
+          <select v-model="form.category" class="form-select" required>
+            <option value="" disabled>Selectionner une categorie</option>
+            <option v-for="category in categories" :key="category" :value="category">
+              {{ category }}
+            </option>
+          </select>
         </div>
 
         <div class="col-md-4">
@@ -71,6 +76,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  categories: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 const emit = defineEmits(["submit", "cancel"]);
@@ -90,7 +99,7 @@ const form = reactive(defaultForm());
 function hydrateFromProduct(product) {
   const source = product || {};
   form.name = source.name || "";
-  form.category = source.category || "";
+  form.category = source.category || props.categories[0] || "";
   form.description = source.description || "";
   form.image_url = source.image_url || "";
   form.purchase_price = Number(source.purchase_price || 0);
@@ -126,6 +135,16 @@ watch(
       return;
     }
     resetForm();
+  },
+  { immediate: true },
+);
+
+watch(
+  () => props.categories,
+  (list) => {
+    if (!Array.isArray(list) || !list.length) return;
+    if (list.includes(form.category)) return;
+    form.category = list[0];
   },
   { immediate: true },
 );

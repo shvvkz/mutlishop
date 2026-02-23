@@ -89,6 +89,21 @@ export function getPublicProducts(shopId) {
   return request(`/api/public/${shopId}/products`);
 }
 
+export function getPublicCategories() {
+  return request("/api/public/categories");
+}
+
+export function getPublicShops() {
+  return request("/api/public/shop");
+}
+
+export function createPublicShop(payload) {
+  return request("/api/public/shop", {
+    method: "POST",
+    body: payload,
+  });
+}
+
 export function getPublicWhatsApp(shopId, productId) {
   return request(`/api/public/${shopId}/products/${productId}/whatsapp`);
 }

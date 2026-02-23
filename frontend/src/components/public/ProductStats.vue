@@ -11,8 +11,8 @@
     <div class="col-sm-4">
       <div class="card border-0 bg-success-subtle h-100">
         <div class="card-body">
-          <p class="text-muted mb-1">Valeur stock (vente)</p>
-          <p class="fs-4 fw-bold mb-0">{{ stockValue }}</p>
+          <p class="text-muted mb-1">Stock total (unites)</p>
+          <p class="fs-4 fw-bold mb-0">{{ totalStock }}</p>
         </div>
       </div>
     </div>
@@ -37,11 +37,10 @@ const props = defineProps({
   },
 });
 
-const stockValue = computed(() => {
-  const total = props.products.reduce((sum, product) => {
-    return sum + Number(product.selling_price || 0) * Number(product.stock || 0);
+const totalStock = computed(() => {
+  return props.products.reduce((sum, product) => {
+    return sum + Number(product.stock || 0);
   }, 0);
-  return `${total.toFixed(2)} EUR`;
 });
 
 const outOfStock = computed(() => {
